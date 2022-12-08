@@ -1,24 +1,10 @@
 <?php
-//import octavalidate
-require 'core/octaValidate-PHP/src/Validate.php';
-//import database class
-require 'core/class_db.php';
-//import functions
 require 'core/functions.php';
-
-//instantiate class
-$db = new DatabaseClass();
-
-//use it
+//use octavalidate
 use Validate\octaValidate;
 
-//set configuration
-$options = array(
-    "stripTags" => true,
-    "strictMode" => true
-);
 //create new instance
-$myForm = new octaValidate('form_login', $options);
+$myForm = new octaValidate('form_login', OV_OPTIONS);
 //define rules for each form input name
 $valRules = array(
     "pass" => array(
@@ -34,7 +20,7 @@ $valRules = array(
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         //begin validation    
-        if ($myForm->validateFields($_POST, $valRules) === true) {
+        if ($myForm->validateFields($valRules, $_POST) === true) {
     
             //check if email is registered already
             $user = $db->SelectOne("SELECT * FROM users WHERE email = :email", ['email' => $_POST['email']]);
@@ -50,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             //compare password
-            if (password_verify($_POST['pass'], $user['secret']) === false) {
+            if (password_verify($_POST['pass'], $user['pass']) === false) {
                 http_response_code(401);
                 $retval = array(
                     "success" => false,
@@ -59,7 +45,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 print_r(json_encode($retval));
                 exit();
             } else {
-                $loggedInToken = $user['user_id'].'::'.strtotime("+24 hours", time());
+                //user_id, expiry_time, user is premium
+                $loggedInToken = base64_encode($user['user_id']).'::'.strtotime("+24 hours", time()).'::'.base64_encode($user['is_premium']);
                 //return success
                 http_response_code(200);
                 $retval = array(
@@ -75,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             //return errors  
             $retval = array(
                 "success" => false,
-                "formError" => json_encode($myForm->getErrors())
+                "formError" => $myForm->getErrors()
             );
             print_r(json_encode($retval));
             exit();
@@ -91,5 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         print_r(json_encode($retval));
         exit();
     }
+}else{
+    doReturn(400, false, ["message" => "Invalid request method"]);
 }
 ?>

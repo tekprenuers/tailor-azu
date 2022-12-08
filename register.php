@@ -1,22 +1,10 @@
 <?php
-//import database class
-require 'core/class_db.php';
-//import functions
 require 'core/functions.php';
-
-//instantiate class
-$db = new DatabaseClass();
-
-//use it
+//use octavalidate
 use Validate\octaValidate;
 
-//set configuration
-$options = array(
-    "stripTags" => true,
-    "strictMode" => true
-);
 //create new instance
-$myForm = new octaValidate('form_register', $options);
+$myForm = new octaValidate('form_register', OV_OPTIONS);
 //define rules for each form input name
 $valRules = array(
     "pass" => array(
@@ -30,35 +18,22 @@ $valRules = array(
 );
 //Check if it is a post request
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    try { //begin validation    
-        if ($myForm->validateFields($_POST, $valRules) === true) {
+    try { 
+        //begin validation    
+        if ($myForm->validateFields($valRules, $_POST) === true) {
 
             //check if email is registered already
             $users = $db->SelectAll("SELECT * FROM users WHERE email = :email", ['email' => $_POST['email']]);
 
             if (count($users)) {
-                http_response_code(400);
-                $retval = array(
-                    "success" => false,
-                    "message" => "A user with this Email exists already"
-                );
-                print_r(json_encode($retval));
-                exit();
+                doReturn(400, false, ["message" => "A user with this email address exists already"]);
             } else {
                 //hash password
                 $pass = password_hash($_POST['pass'], PASSWORD_BCRYPT);
                 $user_id = md5($_POST['email'].uniqid());
                 //save to database
                 $insert = $db->Insert("INSERT INTO users (user_id, email, pass, date_joined) VALUES (:uid, :email, :pass, :date)", ['uid' => $user_id, 'email' => $_POST['email'], 'pass' => $pass, 'date' => time()]);
-
-                //return success
-                http_response_code(200);
-                $retval = array(
-                    "success" => true,
-                    "message" => "Registration successful"
-                );
-                print_r(json_encode($retval));
-                exit();
+                doReturn(200, true, ["message" => "Registration successful"]);
             }
         } else {
             http_response_code(400);
@@ -81,6 +56,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         print_r(json_encode($retval));
         exit();
     }
+}else{
+    doReturn(400, false, ["message" => "Invalid request method"]);
 }
 
 //check if field names exist then add new error that yit doesnt exist
