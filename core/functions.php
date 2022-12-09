@@ -1,6 +1,8 @@
 <?php
 
-define('CUSTOMER_PROFILE_DIR' , 'uploads/profile/');
+define('CUSTOMER_PROFILE_DIR', 'uploads/profile/');
+define('BACKEND_URL', 'http://localhost/tailorAzu/');
+define('PUBLIC_CUSTOMER_PROFILE_DIR', 'uploads/profile/');
 
 //import database class
 require 'class_db.php';
@@ -60,4 +62,6 @@ function doReturn(int $status = 400, bool $success = false, $data)
     http_response_code($status);
     return (print_r(json_encode($retval)) . exit());
 }
+
+//do stats function for price and num of customers
 ?>

@@ -9,7 +9,7 @@ $myForm = new octaValidate('form_register', OV_OPTIONS);
 //define rules for each form input name
 $valRules = array(
     "cus_name" => array(
-        ["R", "Your password is required"],
+        ["R", "Customer name is required"],
         ["APLHA_SPACES", "Customer name must have letters or spaces"]
     ),
     "token" => array(
