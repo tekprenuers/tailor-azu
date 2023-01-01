@@ -1,5 +1,7 @@
 <?php
 require 'core/functions.php';
+//do cors
+cors();
 //use octavalidate
 use Validate\octaValidate;
 

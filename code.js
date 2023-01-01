@@ -34,3 +34,23 @@ sessionStorage.removeItem('name')
 sessionStorage.clear()
 
 //Simon Ugorji 🚀 (Octagon)
+
+// How to create a polling site using php and
+
+//project inspired by linkedin vote feature using react
+
+//select number of polls then find percentage of each
+
+//%  = 100% / Number of polls
+
+//If user chooses one, check the total votes of each poll 
+
+// 100 then percent wil be 100 / 170 * 100%
+
+// 50 then percent wil be 50 / 170 * 100%
+
+// 20 then percent wil be 20 / 170 * 100%
+
+// function to add new poll
+
+// check if ip has voted before, then store vote or remove vote. 
