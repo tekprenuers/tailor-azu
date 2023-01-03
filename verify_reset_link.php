@@ -14,21 +14,25 @@ $valRules = array(
     )
 );
 //Check if it is a post request
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['hash']) && !empty($_GET['hash'])) {
     try {
+        $hash = strtolower(trim(urldecode($_GET['hash'])));
+        $email = strtolower(trim(urldecode($_GET['email'])));
         //begin validation    
-        if ($myForm->validateFields($valRules, $_POST) === true) {
+        if ($myForm->validateFields($valRules, $_GET) === true) {
     
             //check if email is registered already
-            $user = $db->SelectOne("SELECT * FROM users WHERE email = :email", ['email' => $_POST['email']]);
+            $user = $db->SelectOne("SELECT * FROM users WHERE email = :email", ['email' => $email]);
 
             if (!$user) {
                 doReturn(400, false, ["message" => "Email address does not exist"]);
             }
-            //generate reset link
-            $link = ORIGIN.'/reset?email='.$user['email'].'&hash='.hash("sha256", $user['pass']);
+            //check reset link
+            if($hash !== hash("sha256", $user['pass'])){
+                doReturn(400, false, ["message" => "Password Reset Link is invalid"]);
+            }
             //send email
-            doReturn(200, true, ["message" => "Please check your email for instructions", "link" => $link]);
+            doReturn(200, true, ["message" => "Password Reset Link was verified"]);
         } else {
             //return errors  
             doReturn(400, false, ["formError" => $myForm->getErrors()]);

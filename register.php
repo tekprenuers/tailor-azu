@@ -38,25 +38,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 doReturn(200, true, ["message" => "Registration successful"]);
             }
         } else {
-            http_response_code(400);
-            //return errors  
-            $retval = array(
-                "success" => false,
-                "formError" => $myForm->getErrors()
-            );
-            print_r(json_encode($retval));
-            exit();
+            doReturn(400, false, ["formError" => $myForm->getErrors()]);
         }
     } catch (Exception $e) {
         error_log($e);
-        http_response_code(500);
-        //return errors  
-        $retval = array(
-            "success" => false,
-            "message" => "A server error has occured"
-        );
-        print_r(json_encode($retval));
-        exit();
+        doReturn(500, false, ["message" => "A server error has occured"]);
     }
 }else{
     doReturn(400, false, ["message" => "Invalid request method"]);
