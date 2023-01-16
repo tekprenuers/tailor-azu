@@ -32,16 +32,9 @@ function verifyToken(string $Token) {
         $token = explode("::", $Token);
         $user_id = base64_decode( $token[0] );
         $time = $token[1];
-        $plan = base64_decode( $token[2] );
-        if (!$user_id || !$time || !$plan || (time() > intval($time))) {
-            http_response_code(401);
-            //return errors  
-            $retval = array(
-                "success" => false,
-                "message" => "You have to login to continue"
-            );
-            print_r(json_encode($retval));
-            exit();
+        $premium = base64_decode( $token[2] );
+        if (!$user_id || !$time || !$premium || (time() > intval($time))) {
+            doReturn(401, false, ["message" => "You have to login to continue"]);
         }else{
             //if successful, return the user_id
             return $user_id;
@@ -57,6 +50,27 @@ function doReturn(int $status = 400, bool $success = false, $data)
     );
     http_response_code($status);
     return (print_r(json_encode($retval)) . exit());
+}
+
+function checkUpdatedProfile($data) {
+    if(!is_array($data) || !count($data)) return;
+    $extData = ['fname', 'lname', 'phone'];
+    $suc = true;
+    //loop through extra data
+    foreach($extData as $e){
+        if(!isset($data[$e]) || empty($data[$e])){
+            $suc = false;
+        }
+    }
+
+    return $suc;
+}
+
+//returns true or false whether or not license is active
+function activeLicense($time){
+    //$time must be a unix timestamp
+    if(time() > $time) return false;
+    return true;
 }
 
 /**

@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $pass = password_hash($_POST['pass'], PASSWORD_BCRYPT);
                 $user_id = md5($_POST['email'].uniqid());
                 //save to database
-                $insert = $db->Insert("INSERT INTO users (user_id, email, pass, date_joined) VALUES (:uid, :email, :pass, :date)", ['uid' => $user_id, 'email' => $_POST['email'], 'pass' => $pass, 'date' => time()]);
+                $insert = $db->Insert("INSERT INTO users (user_id, email, pass, expiry, date_joined) VALUES (:uid, :email, :pass, :exp, :date)", ['uid' => $user_id, 'email' => $_POST['email'], 'pass' => $pass, 'exp' => strtotime("+14 days", time()), 'date' => time()]);
                 doReturn(200, true, ["message" => "Registration successful"]);
             }
         } else {

@@ -6,9 +6,10 @@ DEFINE ('DB_USER', 'root');
 DEFINE ('DB_PASS', '');
 DEFINE ('DB_NAME', 'tailor');
 
-define('CUSTOMER_PROFILE_DIR', 'uploads/profile/');
+define('PROFILE_DIR', 'uploads/profile/');
+define('REQUESTS_DIR', 'uploads/requests/');
 define('BACKEND_URL', 'http://localhost/tailorAzu/');
-define('PUBLIC_CUSTOMER_PROFILE_DIR', 'uploads/profile/');
+define('PUBLIC_PROFILE_DIR', 'uploads/profile/');
 
 //frontend url
 define('ORIGIN', 'http://localhost:5173');

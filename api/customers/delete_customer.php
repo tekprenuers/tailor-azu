@@ -1,6 +1,7 @@
 <?php
 
-require 'core/functions.php';
+require '../../core/functions.php';
+cors();
 //use octavalidate
 use Validate\octaValidate;
 
@@ -25,41 +26,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!$user) {
                 doReturn(401, false, ["message" => "Please login to continue"]);
             } else {
+                //check if license is active
+                if(!activeLicense($user['expiry'])) doReturn(401, false, ["message" => "Your subscription has expired"]);
+
                 //check if customer exists
                 $customer = $db->SelectOne("SELECT * FROM customers WHERE cus_id = :cid AND user_id = :uid", ['cid' => $_POST['cus_id'], 'uid' => $user_id]);
                 if (!$customer) {
                     doReturn(400, false, ["message" => "This customer does not exist"]);
                 }
+
                 //delete customer
                 $db->Remove("DELETE FROM customers WHERE id = :id", ['id' => $customer['id']]);
                 //delete profile if exists
-                if($customer['cus_image']){
-                    if(file_exists(CUSTOMER_PROFILE_DIR.$customer['cus_image'])){
-                        unlink(CUSTOMER_PROFILE_DIR.$customer['cus_image']);
+                if($customer['image']){
+                    if(file_exists(PROFILE_DIR.$customer['image'])){
+                        unlink(PROFILE_DIR.$customer['image']);
                     }
                 }
+
+                //check for requests
+                $requests = $db->SelectAll("SELECT * FROM requests WHERE cus_id = :cid AND user_id = :uid", ['cid' => $customer['cus_id'], 'uid' => $user_id]);
+                //delete requests
+                if(!empty($requests)){
+                    $db->Remove("DELETE FROM requests WHERE cus_id = :cid AND user_id = :uid", ['cid' => $customer['cus_id'], 'uid' => $user_id]);
+                    //loop through requests
+                    foreach($requests as $key => $req){
+                        //delete request image if it exists
+                        if($requests[$key]['image']){
+                            if(file_exists(PROFILE_DIR.$requests[$key]['image'])){
+                                unlink(PROFILE_DIR.$requests[$key]['image']);
+                            }
+                        }
+                    }
+                }
+                
+                //remaining measurements
+                
                 doReturn(200, true, ["message" => "Customer data has been deleted"]);
             }
         } else {
-            http_response_code(400);
             //return errors  
-            $retval = array(
-                "success" => false,
-                "formError" => $myForm->getErrors()
-            );
-            print_r(json_encode($retval));
-            exit();
+            doReturn(400, false, ["formError" => $myForm->getErrors()]);
         }
     } catch (Exception $e) {
         error_log($e);
-        http_response_code(500);
-        //return errors  
-        $retval = array(
-            "success" => false,
-            "message" => "A server error has occured"
-        );
-        print_r(json_encode($retval));
-        exit();
+        doReturn(500, false, ["message" => "A server error has occured"]);
     }
 }else{
     doReturn(400, false, ["message" => "Invalid request method"]);

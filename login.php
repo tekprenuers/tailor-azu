@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         //begin validation    
         if ($myForm->validateFields($valRules, $_POST) === true) {
-    
+
             //check if email is registered already
             $user = $db->SelectOne("SELECT * FROM users WHERE email = :email", ['email' => $_POST['email']]);
 
@@ -35,9 +35,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 doReturn(401, false, ["message" => "You have provided an Invalid password"]);
             } else {
                 //user_id, expiry_time, user is premium
-                $loggedInToken = base64_encode($user['user_id']).'::'.strtotime("+24 hours", time()).'::'.base64_encode($user['is_premium']);
+                $loggedInToken = base64_encode($user['user_id']) . '::' . strtotime("+24 hours", time()) . '::' . base64_encode($user['is_premium']);
                 //return success
-                doReturn(200, true, ["message" => "Login successful", "token" => $loggedInToken]);
+                $retval = array(
+                    "message" => "Login successful"
+                );
+                //check if user still have an active license
+                if (activeLicense($user['expiry'])) {
+                    $retval["token"] = $loggedInToken;
+                    //check if user has updated his profile
+                    if (checkUpdatedProfile($user)) {
+                        $retval["user"] = array(
+                            "fname" => $user['fname'],
+                            "image" => (!empty($user['image'])) ? BACKEND_URL . PUBLIC_PROFILE_DIR . $user['image'] : null
+                        );
+                        $retval["profileUpdated"] = true;
+                    } else {
+                        $retval["profileUpdated"] = false;
+                    }
+                } else {
+                    $retval['expired'] = "true";
+                }
+
+                //do response
+                doReturn(200, true, $retval);
             }
         } else {
             //return errors  
@@ -47,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         error_log($e);
         doReturn(500, false, ["message" => "A server error has occured"]);
     }
-}else{
+} else {
     doReturn(400, false, ["message" => "Invalid request method"]);
 }
 ?>
