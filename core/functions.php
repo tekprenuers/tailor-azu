@@ -2,7 +2,8 @@
 require 'env.php';
 //import database class
 require 'class_db.php';
-
+//import mail file
+require 'mail.php';
 //import octavalidate
 require 'octaValidate-PHP/src/Validate.php';
 //instantiate class
@@ -32,8 +33,8 @@ function verifyToken(string $Token) {
         $token = explode("::", $Token);
         $user_id = base64_decode( $token[0] );
         $time = $token[1];
-        $premium = base64_decode( $token[2] );
-        if (!$user_id || !$time || !$premium || (time() > intval($time))) {
+        // $premium = base64_decode( $token[2] );
+        if (!$user_id || !$time  || (time() > intval($time))) {
             doReturn(401, false, ["message" => "You have to login to continue"]);
         }else{
             //if successful, return the user_id
@@ -69,8 +70,23 @@ function checkUpdatedProfile($data) {
 //returns true or false whether or not license is active
 function activeLicense($time){
     //$time must be a unix timestamp
-    if(time() > $time) return false;
+    if(time() > intval($time)) return false;
     return true;
+}
+
+//handle dynamic email
+//replaces email placeholders with actual values
+function doDynamicEmail($replaceWith, $body){
+    
+    //return false if it isn't an array
+    if(!is_array($replaceWith)) return;
+
+    //loop through
+    foreach($replaceWith as $key => $val){
+        $body = str_replace('{'.strtoupper($key). '}', $val, $body);
+    }
+
+    return $body;
 }
 
 /**

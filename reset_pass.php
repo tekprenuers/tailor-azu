@@ -23,7 +23,7 @@ $valRules = array(
 );
 //Check if it is a post request
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    try { 
+    try {
         //begin validation    
         if ($myForm->validateFields($valRules, $_POST) === true) {
 
@@ -38,14 +38,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 doReturn(400, false, ["message" => "Email address does not exist"]);
             }
             //verify hash
-            if($hash !== hash("sha256", $user['pass'])){
+            if ($hash !== hash("sha256", $user['pass'])) {
                 doReturn(400, false, ["message" => "Password Reset Link is invalid"]);
             }
             //update password
             $newPass = password_hash($pass, PASSWORD_BCRYPT);
             //update db
             $upd = $db->Update("UPDATE users SET pass = :pass WHERE id = :id", ['pass' => $newPass, 'id' => $user['id']]);
-            //return
+
+            ///////////////////////////////send mail
+
+            $emailTemp = file_get_contents('emails/reset_completed.html');
+            $dynamic = array(
+                "FNAME" => (!empty($user['fname'])) ? $user['fname'] : "Esteemed Client",
+                "TIME" => gmdate("d M Y", time()),
+                "UID" => $user['user_id']
+            );
+            //replace placeholders with actual values
+            $body = doDynamicEmail($dynamic, $emailTemp);
+            //send mail
+            sendMail($_POST['email'], '', "Password Reset Completed", $body);
+            //return response
             doReturn(200, true, ["message" => "Password has been updated"]);
         } else {
             doReturn(400, false, ["formError" => $myForm->getErrors()]);
@@ -54,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         error_log($e);
         doReturn(500, false, ["message" => "A server error has occured"]);
     }
-}else{
+} else {
     doReturn(400, false, ["message" => "Invalid request method"]);
 }
 ?>

@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         //begin validation    
         if ($myForm->validateFields($valRules, $_POST) === true) {
-    
+
             //check if email is registered already
             $user = $db->SelectOne("SELECT * FROM users WHERE email = :email", ['email' => $_POST['email']]);
 
@@ -26,8 +26,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 doReturn(400, false, ["message" => "Email address does not exist"]);
             }
             //generate reset link
-            $link = ORIGIN.'/reset?email='.$user['email'].'&hash='.hash("sha256", $user['pass']);
-            //send email
+            //try to add time limit too
+            $link = ORIGIN . '/reset?email=' . $user['email'] . '&hash=' . hash("sha256", $user['pass']);
+
+            ///////////////////////////////send mail
+            
+            $emailTemp = file_get_contents('emails/reset_link.html');
+            $dynamic = array(
+                "FNAME" => (!empty($user['fname'])) ? $user['fname'] : "Esteemed Client",
+                "RESET_LINK" => $link,
+                "UID" => $user['user_id']
+            );
+            //replace placeholders with actual values
+            $body = doDynamicEmail($dynamic, $emailTemp);
+            //send mail
+            sendMail($_POST['email'], '', "Reset Your Password", $body);
+            //return response
             doReturn(200, true, ["message" => "Please check your email for instructions", "link" => $link]);
         } else {
             //return errors  
@@ -37,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         error_log($e);
         doReturn(500, false, ["message" => "A server error has occured"]);
     }
-}else{
+} else {
     doReturn(400, false, ["message" => "Invalid request method"]);
 }
 ?>

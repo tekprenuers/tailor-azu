@@ -35,6 +35,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $user_id = md5($_POST['email'].uniqid());
                 //save to database
                 $insert = $db->Insert("INSERT INTO users (user_id, email, pass, expiry, date_joined) VALUES (:uid, :email, :pass, :exp, :date)", ['uid' => $user_id, 'email' => $_POST['email'], 'pass' => $pass, 'exp' => strtotime("+14 days", time()), 'date' => time()]);
+
+                ///////////////////////////////send mail
+
+                $emailTemp = file_get_contents('emails/register.html');
+                $dynamic = array(
+                    "EXPIRY_END_DATE" => gmdate("d M Y", strtotime("+14 days", time())),
+                    "UID" =>  $user_id
+                );
+                //replace placeholders with actual values
+                $body = doDynamicEmail($dynamic, $emailTemp);
+                //send mail
+                sendMail($_POST['email'], '', "Account Created Successfully", $body);
+                //return response
                 doReturn(200, true, ["message" => "Registration successful"]);
             }
         } else {

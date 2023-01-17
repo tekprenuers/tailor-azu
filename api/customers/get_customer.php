@@ -49,14 +49,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                 $customer['lname'] = explode(' ', $customer['name'])[0];
                 $customer['fname'] = explode(' ', $customer['name'])[1];
                 
-                $customer['date_added'] = gmdate('d-m-Y', $customer['date_added']);
+                $customer['date_added'] = gmdate('D M d, Y', $customer['date_added']);
 
                 //check if tape_male exists then decode
                 (!empty($customer['tape_male'])) ? $customer['tape_male'] = json_decode($customer['tape_male']) : null;
                 //do thesame for tape_female
                 (!empty($customer['tape_female'])) ? $customer['tape_female'] = json_decode($customer['tape_female']) : null;
                 //reassign last updated
-                $customer['tape_last_updated'] = gmdate(('d-m-Y'), $customer['tape_last_updated']);
+                $customer['tape_last_updated'] = gmdate('D M d, Y', $customer['tape_last_updated']);
 
                 //get requests
                 $requests = $db->SelectAll("SELECT requests.name, requests.price, requests.extra_note, requests.due_date, requests.is_completed FROM requests WHERE user_id = :uid AND cus_id = :cid", ['uid' => $user_id, 'cid' => $_GET['cus_id']]);

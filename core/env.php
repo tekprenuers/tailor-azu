@@ -1,5 +1,4 @@
 <?php
-
 //SOME CONSTANTS HERE
 DEFINE ('DB_HOST', 'localhost');
 DEFINE ('DB_USER', 'root');

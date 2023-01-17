@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                 $measurement['lname'] = explode(' ', $measurement['name'])[0];
                 $measurement['fname'] = explode(' ', $measurement['name'])[1];
                 
-                $measurement['date_added'] = gmdate('d-m-Y', $measurement['date_added']);
+                $measurement['date_added'] = gmdate('D M d, Y', $measurement['date_added']);
 
                 doReturn(200, true, $measurement);
             }

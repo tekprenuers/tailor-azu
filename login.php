@@ -34,8 +34,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (password_verify($_POST['pass'], $user['pass']) === false) {
                 doReturn(401, false, ["message" => "You have provided an Invalid password"]);
             } else {
-                //user_id, expiry_time, user is premium
-                $loggedInToken = base64_encode($user['user_id']) . '::' . strtotime("+24 hours", time()) . '::' . base64_encode($user['is_premium']);
+                //user_id, expiry_time,
+                $loggedInToken = base64_encode($user['user_id']) . '::' . strtotime("+24 hours", time());
                 //return success
                 $retval = array(
                     "message" => "Login successful"

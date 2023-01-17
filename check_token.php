@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             $loggedInToken = explode("::", $_GET['token']);
 
             //check token
-            if(count($loggedInToken) < 3){
+            if(count($loggedInToken) < 2){
                 doReturn(401, false, ["message" => "Invalid token"]);
             }
 
