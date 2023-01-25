@@ -24,7 +24,7 @@ $valRules = array(
         ["R", "Request's Name is required"],
         ["TEXT", "Request's Name contains invalid characters"]
     ),
-    "due_date" => array(
+    "deadline" => array(
         ["R", "Date to be delivered is required"]
     ),
     "extra_note" => array(
@@ -64,16 +64,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
 
                 //default vars
-                $image = $price = $extra_note = $due_date = $name = $completed = null;
+                $image = $price = $extra_note = $deadline = $name = $completed = null;
 
                 //reassign variables
                 $price = (isset($_POST['price']) && !empty($_POST['price'])) ? $_POST['price'] : $request['price'];
                 $extra_note = (isset($_POST['extra_note']) && !empty($_POST['extra_note'])) ? $_POST['extra_note'] : $request['extra_note'];
                 $name = (isset($_POST['name']) && !empty($_POST['name'])) ? $_POST['name'] : $request['name'];
-                $due_date = (isset($_POST['due_date']) && !empty($_POST['due_date'])) ? strtotime($_POST['due_date']) : $request['due_date'];
+                $deadline = (isset($_POST['deadline']) && !empty($_POST['deadline'])) ? strtotime($_POST['deadline']) : $request['deadline'];
                 
                 //check if due date is in the past
-                if(time() > $due_date)  doReturn(400, false, ["message" => "Due date must not be in the past"]);
+                if(time() > $deadline)  doReturn(400, false, ["message" => "Due date must not be in the past"]);
 
                 $completed = (isset($_POST['completed']) && !empty($_POST['completed'])) ? $_POST['completed'] : $request['completed'];
                 //check if user uploaded an image
@@ -89,13 +89,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     move_uploaded_file($_FILES['image']['tmp_name'], $target_file);
                 }
 
-                $db->Update("UPDATE requests SET name = :name, extra_note = :en, image = :image, price = :price, due_date = :due_date, is_completed = :completed WHERE id = :id", [
+                $db->Update("UPDATE requests SET name = :name, extra_note = :en, image = :image, price = :price, deadline = :deadline, is_completed = :completed WHERE id = :id", [
                     'id' => $request['id'],
                     'name' => $name,
                     'en' => $extra_note,
                     'image' => $image,
                     'price' => $price,
-                    'due_date' => $due_date,
+                    'deadline' => $deadline,
                     'completed' => $completed
                 ]);
 

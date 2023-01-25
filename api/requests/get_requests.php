@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                         $requests[$key]['image'] = BACKEND_URL . REQUESTS_DIR  . $requests[$key]['image'];
                     }
                     //format date
-                    $requests[$key]['due_date'] = gmdate('d-m-Y', $requests[$key]['due_date']);
+                    $requests[$key]['deadline'] = gmdate('d-m-Y', $requests[$key]['deadline']);
                 }
 
                 doReturn(200, true, ['requests' => $requests, 'customer' => $customer]);

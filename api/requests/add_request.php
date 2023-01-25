@@ -17,7 +17,7 @@ $valRules = array(
         ["R", "Request's Name is required"],
         ["TEXT", "Request's Name contains invalid characters"]
     ),
-    "due_date" => array(
+    "deadline" => array(
         ["R", "Date to be delivered is required"]
     ),
     "extra_note" => array(
@@ -54,16 +54,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     doReturn(401, false, ["message" => "Your subscription has expired", "expired" => true]);
 
                 //default vars
-                $image = $price = $extra_note = $due_date = $name = null;
+                $image = $price = $extra_note = $deadline = $name = null;
 
                 //reassign variables
                 $price = (isset($_POST['price']) && !empty($_POST['price'])) ? $_POST['price'] : null;
                 $extra_note = (isset($_POST['extra_note']) && !empty($_POST['extra_note'])) ? $_POST['extra_note'] : null;
                 $name = (isset($_POST['name']) && !empty($_POST['name'])) ? $_POST['name'] : null;
-                $due_date = (isset($_POST['due_date']) && !empty($_POST['due_date'])) ? strtotime($_POST['due_date']) : null;
+                $deadline = (isset($_POST['deadline']) && !empty($_POST['deadline'])) ? strtotime($_POST['deadline']) : null;
 
                 //check if due date is in the past
-                if(time() > $due_date)  doReturn(400, false, ["message" => "Due date must not be in the past"]);
+                if(time() > $deadline)  doReturn(400, false, ["message" => "Due date must not be in the past"]);
 
                 //check if user uploaded an image
                 $image = (isset($_FILES['image']) && !empty($_FILES['image'])) ? $_FILES['image']['name'] : null;
@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                 //request id  
                 $reqId = md5(time().$name.$customer['date_added']);
-                $db->Insert("INSERT INTO requests (req_id, user_id, cus_id, name, extra_note, image, price, due_date) VALUES (:reqid, :uid, :cid, :name, :en, :image, :price, :due_date)", [
+                $db->Insert("INSERT INTO requests (req_id, user_id, cus_id, name, extra_note, image, price, deadline) VALUES (:reqid, :uid, :cid, :name, :en, :image, :price, :deadline)", [
                     'reqid' => $reqId,
                     'uid' => $user_id,
                     'cid' => $_POST['cus_id'],
@@ -90,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'en' => $extra_note,
                     'image' => $image,
                     'price' => $price,
-                    'due_date' => $due_date
+                    'deadline' => $deadline
                 ]);
 
                 doReturn(200, true, ["message" => "Request created successfully"]);

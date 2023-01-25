@@ -23,7 +23,7 @@ class Invoice implements RouteInterface
                 'customer',
                 'send_notification',
                 'tax',
-                'due_date',
+                'deadline',
                 'metadata',
                 'draft',
                 'currency',
@@ -34,7 +34,7 @@ class Invoice implements RouteInterface
                 RouteInterface::PARAMS_KEY => [
                     'customer',
                     'amount',
-                    'due_date',
+                    'deadline',
                 ],
             ],
         ];
@@ -110,7 +110,7 @@ class Invoice implements RouteInterface
                 'customer',
                 'send_notification',
                 'tax',
-                'due_date',
+                'deadline',
                 'metadata',
                 'currency',
             ],

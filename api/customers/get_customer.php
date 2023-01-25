@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                 //reassign last updated
                 $customer['tape_last_updated'] = gmdate('D M d, Y', $customer['tape_last_updated']);
                 //get requests
-                $requests = $db->SelectAll("SELECT requests.name, requests.price, requests.extra_note, requests.due_date, requests.is_completed FROM requests WHERE user_id = :uid AND cus_id = :cid", ['uid' => $user_id, 'cid' => $_GET['cus_id']]);
+                $requests = $db->SelectAll("SELECT requests.name, requests.price, requests.extra_note, requests.deadline, requests.is_completed FROM requests WHERE user_id = :uid AND cus_id = :cid", ['uid' => $user_id, 'cid' => $_GET['cus_id']]);
                 //append to variable
                 $customer['requests'] = $requests;
 

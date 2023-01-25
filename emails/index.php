@@ -9,7 +9,12 @@ $placeholders = array(
     "UID" => "User's ID",
     "TIME" => "current time in 20 Jan 2023 format",
     "RESET_LINK" => "password reset link",
-    "REFERENCE" => "Transaction Reference"
+    "REFERENCE" => "Transaction Reference",
+    "CUS_NAME" => "Customer's name",
+    "CUS_PHONE" => "Customer's primary phone number",
+    "REQUEST_NAME" => "The name fo the customer's request",
+    "DEADLINE" => "Due date of the request",
+    "PRONOUN" => "Him for males and Her for females"
 );
 
 die("")

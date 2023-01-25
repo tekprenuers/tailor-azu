@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                     $customers[$key]['date_added'] = gmdate('M d Y', $customers[$key]['date_added']);
 
                     // //requests
-                    // $requests = $db->SelectAll("SELECT requests.name, requests.image, requests.price, requests.extra_note, requests.due_date, requests.is_completed FROM requests WHERE user_id = :uid AND cus_id = :cid", ['uid' => $user_id, 'cid' => $customers[$key]['cus_id']]);
+                    // $requests = $db->SelectAll("SELECT requests.name, requests.image, requests.price, requests.extra_note, requests.deadline, requests.is_completed FROM requests WHERE user_id = :uid AND cus_id = :cid", ['uid' => $user_id, 'cid' => $customers[$key]['cus_id']]);
                     // //append to variable
                     // $customers[$key]['requests'] = $requests;
                 }
