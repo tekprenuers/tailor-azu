@@ -8,7 +8,11 @@ DEFINE ('DB_NAME', 'tailor');
 define('PROFILE_DIR', 'uploads/profile/');
 define('REQUESTS_DIR', 'uploads/requests/');
 define('BACKEND_URL', 'http://localhost/tailorAzu/');
+define('FRONTEND_URL', 'http://localhost:5173');
 define('PUBLIC_PROFILE_DIR', 'uploads/profile/');
 
 //frontend url
 define('ORIGIN', 'http://localhost:5173');
+
+define('PAYSTACK_SECRET_KEY', 'sk_test_43cbc2368754db8afc13428e82477af755ab2ce1');
+define('STATIC_ASSETS_URL', '../static/');

@@ -89,6 +89,15 @@ function doDynamicEmail($replaceWith, $body){
     return $body;
 }
 
+//this function will only be called internally by scripts and not through APIs
+//scripts such as in the clients folder will have session started already
+function setFormResponse(bool $success,  string $message, string $redirectTo){
+    if($success && $message){
+        $_SESSION['formResponse'] = ["success" => $success, "message" => $message];
+        return header("Location: $redirectTo").exit();
+    }
+}
+
 /**
  *  An example CORS-compliant method.  It will allow any GET, POST, or OPTIONS requests from any
  *  origin.

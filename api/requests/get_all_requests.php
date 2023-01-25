@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             } else {
                 //check if license is active
                 if (!activeLicense($user['expiry']))
-                    doReturn(401, false, ["message" => "Your subscription has expired"]);
+                    doReturn(401, false, ["message" => "Your subscription has expired", "expired" => true]);
 
                 //get requests
                 $requests = $db->SelectAll("SELECT *, requests.name AS req_name FROM requests INNER JOIN customers ON customers.cus_id = requests.cus_id AND requests.user_id = :uid", ['uid' => $user_id]);

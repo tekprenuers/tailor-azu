@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 //check if license is active
                 if (!activeLicense($user['expiry']))
-                    doReturn(401, false, ["message" => "Your subscription has expired"]);
+                    doReturn(401, false, ["message" => "Your subscription has expired", "expired" => true]);
 
                 //default vars
                 $image = $price = $extra_note = $due_date = $name = null;
@@ -61,6 +61,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $extra_note = (isset($_POST['extra_note']) && !empty($_POST['extra_note'])) ? $_POST['extra_note'] : null;
                 $name = (isset($_POST['name']) && !empty($_POST['name'])) ? $_POST['name'] : null;
                 $due_date = (isset($_POST['due_date']) && !empty($_POST['due_date'])) ? strtotime($_POST['due_date']) : null;
+
+                //check if due date is in the past
+                if(time() > $due_date)  doReturn(400, false, ["message" => "Due date must not be in the past"]);
 
                 //check if user uploaded an image
                 $image = (isset($_FILES['image']) && !empty($_FILES['image'])) ? $_FILES['image']['name'] : null;

@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             } else {
                 //check if license is active
                 if (!activeLicense($user['expiry']))
-                    doReturn(401, false, ["message" => "Your subscription has expired"]);
+                    doReturn(401, false, ["message" => "Your subscription has expired", "expired" => true]);
 
                 //check if customer exists
                 $customer = $db->SelectOne("SELECT *, measurements.date_updated AS tape_last_updated FROM customers LEFT JOIN measurements ON measurements.cus_id = customers.cus_id AND measurements.user_id = customers.user_id WHERE customers.user_id = :uid AND customers.cus_id = :cid", ['uid' => $user_id, 'cid' => $_GET['cus_id']]);
@@ -55,9 +55,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                 (!empty($customer['tape_male'])) ? $customer['tape_male'] = json_decode($customer['tape_male']) : null;
                 //do thesame for tape_female
                 (!empty($customer['tape_female'])) ? $customer['tape_female'] = json_decode($customer['tape_female']) : null;
+                // /2021-11-05 15:00:00
+                $customer['tape_last_updated_jsformatted'] = gmdate('Y-M-d H:m:s', $customer['tape_last_updated']);
                 //reassign last updated
                 $customer['tape_last_updated'] = gmdate('D M d, Y', $customer['tape_last_updated']);
-
                 //get requests
                 $requests = $db->SelectAll("SELECT requests.name, requests.price, requests.extra_note, requests.due_date, requests.is_completed FROM requests WHERE user_id = :uid AND cus_id = :cid", ['uid' => $user_id, 'cid' => $_GET['cus_id']]);
                 //append to variable

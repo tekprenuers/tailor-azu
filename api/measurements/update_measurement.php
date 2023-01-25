@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 //check if license is active
                 if (!activeLicense($user['expiry']))
-                    doReturn(401, false, ["message" => "Your subscription has expired"]);
+                    doReturn(401, false, ["message" => "Your subscription has expired", "expired" => true]);
 
                 //default vars
                 $tape_male = $tape_female = null;

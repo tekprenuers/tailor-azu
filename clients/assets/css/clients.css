@@ -1,0 +1,23 @@
+.mw-500{
+    max-width: 500px !important;
+}
+.radius-0{
+    border-radius: 0 !important;
+}
+.btn-app-primary{
+    background-color: var(--primary) !important;
+}
+.has-shadow{
+    box-shadow:  20px 20px 60px #bebebe, -20px -20px 60px #ffffff !important;
+}
+.should-be-centered {
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, 50%);
+}
+:root {
+    --primary: #ff9500;
+    --primary-dark:#e78906;
+        /*#00029d; /*#8107c6;*/
+}

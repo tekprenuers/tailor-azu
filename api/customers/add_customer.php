@@ -32,9 +32,6 @@ $valRules = array(
     "email" => array(
         ["EMAIL"]
     ),
-    "requirement" => array(
-        ["TEXT", "Customer's requirement contains invalid characters"]
-    ),
     "addr" => array(
         ["R", "Customer's Home Address is required"],
         ["TEXT", "Customer's Home address contains invalid characters"]
@@ -60,13 +57,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 //check if license is active
                 if (!activeLicense($user['expiry']))
-                    doReturn(401, false, ["message" => "Your subscription has expired"]);
+                    doReturn(401, false, ["message" => "Your subscription has expired", "expired" => true]);
 
                 $cus_name = $_POST['lname'] . ' ' . $_POST['fname'];
                 $cus_id = md5(substr($cus_name, 0, 5) . uniqid());
 
                 //default vars
-                $cus_image = $cus_phone = $cus_alt_phone = $requirement = $due_date = $email = $addr = $gender = null;
+                $cus_image = $cus_phone = $cus_alt_phone = $email = $addr = $gender = null;
 
                 //reassign variables
                 $cus_phone = (isset($_POST['phone']) && !empty($_POST['phone'])) ? '+234' . $_POST['phone'] : null;
@@ -83,8 +80,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 //check if user uploaded an image
                 $cus_image = (isset($_FILES['image']) && !empty($_FILES['image'])) ? $_FILES['image']['name'] : null;
-                $requirement = (isset($_POST['requirement']) && !empty($_POST['requirement'])) ? $_POST['requirement'] : null;
-                $due_date = (isset($_POST['due_date']) && !empty($_POST['due_date'])) ? strtotime($_POST['due_date']) : null;
                 //check if user uploaded an image again
                 if ($cus_image) {
                     $target_file = '../../'.PROFILE_DIR . $_FILES['image']['name'];
@@ -92,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     move_uploaded_file($_FILES['image']['tmp_name'], $target_file);
                 }
 
-                $db->Insert("INSERT INTO customers (user_id, cus_id, name, gender, image, phone, alt_phone, email, addr, date_added, requirement, due_date) VALUES (:uid, :cid, :name, :gender, :image, :phone, :alt_phone, :email, :addr, :date_added, :req, :due_date)", [
+                $db->Insert("INSERT INTO customers (user_id, cus_id, name, gender, image, phone, alt_phone, email, addr, date_added) VALUES (:uid, :cid, :name, :gender, :image, :phone, :alt_phone, :email, :addr, :date_added)", [
                     'uid' => $user_id,
                     'cid' => $cus_id,
                     'name' => $cus_name,
@@ -102,9 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'alt_phone' => $cus_alt_phone,
                     'email' => $email,
                     'addr' => $addr,
-                    'date_added' => time(),
-                    'req' => $requirement,
-                    'due_date' => $due_date
+                    'date_added' => time()
                 ]);
 
                 doReturn(200, true, ["message" => "Customer added successfully"]);

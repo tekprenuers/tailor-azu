@@ -2,3 +2,4 @@ code.js
 octaValidate-PHP/vendor
 uploads/profile/*
 uploads/requests/*
+core/env.php

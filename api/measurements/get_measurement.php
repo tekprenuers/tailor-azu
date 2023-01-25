@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             } else {
                 //check if license is active
                 if (!activeLicense($user['expiry']))
-                    doReturn(401, false, ["message" => "Your subscription has expired"]);
+                    doReturn(401, false, ["message" => "Your subscription has expired", "expired" => true]);
 
                 $measurement = $db->SelectOne("SELECT measurements.tape_male, measurements.tape_female, measurements.date_updated, customers.name AS cus_name, customers.gender FROM measurements RIGHT JOIN customers ON customers.cus_id = measurements.cus_id WHERE customers.user_id = :uid AND customers.cus_id = :cid", ['uid' => $user_id, 'cid' => $_GET['cus_id']]);
 

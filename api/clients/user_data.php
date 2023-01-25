@@ -27,9 +27,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                 unset($user['id']);
                 unset($user['user_id']);
                 unset($user['pass']);
-                unset($user['is_premium']);
+                // unset($user['is_premium']);
                 unset($user['date_joined']);
-                unset($user['user_id']);
+                // unset($user['user_id']);
 
                 doReturn(200, true, $user);
             }

@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             } else {
                 //check if license is active
                 if (!activeLicense($user['expiry']))
-                    doReturn(401, false, ["message" => "Your subscription has expired"]);
+                    doReturn(401, false, ["message" => "Your subscription has expired", "expired" => true]);
 
                 //get measurement
                 $config = $db->SelectOne("SELECT tape_male, tape_female FROM config WHERE user_id = :uid", [

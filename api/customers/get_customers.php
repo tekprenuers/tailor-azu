@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             } else {
                 //check if license is active
                 if (!activeLicense($user['expiry']))
-                    doReturn(401, false, ["message" => "Your subscription has expired"]);
+                    doReturn(401, false, ["message" => "Your subscription has expired", "expired" => true]);
 
                 //check if customer exists
                 $customers = $db->SelectAll("SELECT * FROM customers WHERE user_id = :uid", ['uid' => $user_id]);

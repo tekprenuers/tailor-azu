@@ -38,25 +38,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $loggedInToken = base64_encode($user['user_id']) . '::' . strtotime("+24 hours", time());
                 //return success
                 $retval = array(
-                    "message" => "Login successful"
+                    "message" => "Login successful",
+                    "token" => $loggedInToken
                 );
-                //check if user still have an active license
-                if (activeLicense($user['expiry'])) {
-                    $retval["token"] = $loggedInToken;
-                    //check if user has updated his profile
-                    if (checkUpdatedProfile($user)) {
-                        $retval["user"] = array(
-                            "fname" => $user['fname'],
-                            "image" => (!empty($user['image'])) ? BACKEND_URL . PUBLIC_PROFILE_DIR . $user['image'] : null
-                        );
-                        $retval["profileUpdated"] = true;
-                    } else {
-                        $retval["profileUpdated"] = false;
-                    }
+                //check if user has updated his profile
+                if (checkUpdatedProfile($user)) {
+                    $retval["user"] = array(
+                        "fname" => $user['fname'],
+                        "image" => (!empty($user['image'])) ? BACKEND_URL . PUBLIC_PROFILE_DIR . $user['image'] : null
+                    );
+                    $retval["profileUpdated"] = true;
                 } else {
-                    $retval['expired'] = "true";
+                    $retval["profileUpdated"] = false;
                 }
-
                 //do response
                 doReturn(200, true, $retval);
             }

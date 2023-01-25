@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 doReturn(401, false, ["message" => "Please login to continue"]);
             } else {
                 //check if license is active
-                if(!activeLicense($user['expiry'])) doReturn(401, false, ["message" => "Your subscription has expired"]);
+                if(!activeLicense($user['expiry'])) doReturn(401, false, ["message" => "Your subscription has expired", "expired" => true]);
 
                 //check if customer exists
                 $customer = $db->SelectOne("SELECT * FROM customers WHERE cus_id = :cid AND user_id = :uid", ['cid' => $_POST['cus_id'], 'uid' => $user_id]);
@@ -60,7 +60,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
                 }
                 
-                //remaining measurements
+                //delete measurement
+                $db->Remove("DELETE FROM measurements WHERE cus_id = :cid AND user_id = :uid", ['cid' => $customer['cus_id'], 'uid' => $user_id]);
                 
                 doReturn(200, true, ["message" => "Customer data has been deleted"]);
             }

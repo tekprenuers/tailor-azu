@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             } else {
                 //check if license is active
                 if (!activeLicense($user['expiry']))
-                    doReturn(401, false, ["message" => "Your subscription has expired"]);
+                    doReturn(401, false, ["message" => "Your subscription has expired", "expired" => true]);
 
                 //get measurement
                 $measurement = $db->SelectOne("SELECT * FROM customers LEFT JOIN measurements ON (measurements.cus_id = customers.cus_id) AND customers.user_id = :uid", [

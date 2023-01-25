@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 doReturn(401, false, ["message" => "Please login to continue"]);
             } else {
                 //check if license is active
-                if(!activeLicense($user['expiry'])) doReturn(401, false, ["message" => "Your subscription has expired"]);
+                if(!activeLicense($user['expiry'])) doReturn(401, false, ["message" => "Your subscription has expired", "expired" => true]);
 
                 //reassign variables
                 $lname = (isset($_POST['lname']) && !empty($_POST['lname'])) ? $_POST['lname'] : $user['lname'];

@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 //check if license is active
                 if (!activeLicense($user['expiry']))
-                    doReturn(401, false, ["message" => "Your subscription has expired"]);
+                    doReturn(401, false, ["message" => "Your subscription has expired", "expired" => true]);
 
                 //check if request exists
                 $request = $db->SelectOne("SELECT * FROM requests WHERE requests.user_id = :uid AND requests.req_id = :id", ['uid' => $user_id, 'id' => $_POST['req_id']]);
@@ -71,6 +71,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $extra_note = (isset($_POST['extra_note']) && !empty($_POST['extra_note'])) ? $_POST['extra_note'] : $request['extra_note'];
                 $name = (isset($_POST['name']) && !empty($_POST['name'])) ? $_POST['name'] : $request['name'];
                 $due_date = (isset($_POST['due_date']) && !empty($_POST['due_date'])) ? strtotime($_POST['due_date']) : $request['due_date'];
+                
+                //check if due date is in the past
+                if(time() > $due_date)  doReturn(400, false, ["message" => "Due date must not be in the past"]);
+
                 $completed = (isset($_POST['completed']) && !empty($_POST['completed'])) ? $_POST['completed'] : $request['completed'];
                 //check if user uploaded an image
                 $image = (isset($_FILES['image']) && !empty($_FILES['image'])) ? $_FILES['image']['name'] : $request['image'];

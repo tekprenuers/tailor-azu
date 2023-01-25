@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 doReturn(401, false, ["message" => "Please login to continue"]);
             } else {
                 //check if license is active
-                if(!activeLicense($user['expiry'])) doReturn(401, false, ["message" => "Your subscription has expired"]);
+                if(!activeLicense($user['expiry'])) doReturn(401, false, ["message" => "Your subscription has expired", "expired" => true]);
 
                 //get measurement
                 $config = $db->SelectOne("SELECT id, tape_male, tape_female FROM config WHERE user_id = :uid", [

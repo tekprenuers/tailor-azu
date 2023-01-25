@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 doReturn(401, false, ["message" => "Please login to continue"]);
             } else {
                 //check if license is active
-                if(!activeLicense($user['expiry'])) doReturn(401, false, ["message" => "Your subscription has expired"]);
+                if(!activeLicense($user['expiry'])) doReturn(401, false, ["message" => "Your subscription has expired", "expired" => true]);
 
                 //check if request exists
                 $request = $db->SelectOne("SELECT * FROM requests WHERE cus_id = :cid AND user_id = :uid AND req_id = :id", ['cid' => $_POST['cus_id'], 'uid' => $user_id, 'id' => $_POST['req_id']]);
