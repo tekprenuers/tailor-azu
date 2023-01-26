@@ -35,9 +35,6 @@ $valRules = array(
     "addr" => array(
         ["R", "Customer's Home Address is required"],
         ["TEXT", "Customer's Home address contains invalid characters"]
-    ),
-    "token" => array(
-        ["R", "A token is required"]
     )
 );
 
@@ -50,7 +47,7 @@ $fileRules = array(
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         if ($myForm->validateFields($valRules, $_POST) === true && $myForm->validateFiles($fileRules) === true) {
-            $user_id = verifyToken($_POST['token']);
+            $user_id = verifyJWT();
             $user = $db->SelectOne("SELECT * FROM users WHERE user_id  = :uid", ['uid' => $user_id]);
             if (!$user) {
                 doReturn(401, false, ["message" => "Please login to continue"]);

@@ -35,17 +35,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 doReturn(401, false, ["message" => "You have provided an Invalid password"]);
             } else {
                 //user_id, expiry_time,
-                $loggedInToken = base64_encode($user['user_id']) . '::' . strtotime("+24 hours", time());
+                // $loggedInToken = base64_encode($user['user_id']) . '::' . strtotime("+24 hours", time());
                 //return success
                 $retval = array(
                     "message" => "Login successful",
-                    "token" => $loggedInToken
+                    //store user id in JWT payload
+                    "token" => doJWT(["uid" => $user['user_id']])
                 );
                 //check if user has updated his profile
                 if (checkUpdatedProfile($user)) {
                     $retval["user"] = array(
                         "fname" => $user['fname'],
-                        "image" => (!empty($user['image'])) ? BACKEND_URL . PUBLIC_PROFILE_DIR . $user['image'] : null
+                        "image" => (!empty($user['image'])) ? BACKEND_URL . '/'.PUBLIC_PROFILE_DIR . $user['image'] : null
                     );
                     $retval["profileUpdated"] = true;
                 } else {

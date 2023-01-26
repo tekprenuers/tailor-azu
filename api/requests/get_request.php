@@ -11,9 +11,6 @@ use Validate\octaValidate;
 $myForm = new octaValidate('', OV_OPTIONS);
 //define rules for each form input name
 $valRules = array(
-    "token" => array(
-        ["R", "A token is required"]
-    ),
     "req_id" => array(
         ["R", "Request ID is required"],
         ["ALPHA_NUMERIC", "Request ID must contain alphabets or numbers"]
@@ -23,7 +20,7 @@ $valRules = array(
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     try {
         if ($myForm->validateFields($valRules, $_GET) === true) {
-            $user_id = verifyToken($_GET['token']);
+            $user_id = verifyJWT();
             $user = $db->SelectOne("SELECT * FROM users WHERE user_id  = :uid", ['uid' => $user_id]);
             if (!$user) {
                 doReturn(401, false, ["message" => "Please login to continue"]);
@@ -41,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                 $request['deadline'] = gmdate('Y-m-d', $request['deadline']);
                 //check if image is not empty
                 if($request['image']){
-                    $request['image'] = BACKEND_URL . REQUESTS_DIR  . $request['image'];
+                    $request['image'] = BACKEND_URL .'/'. REQUESTS_DIR  . $request['image'];
                 }
                 // //hide private vars
                 // unset($request['user_id']);

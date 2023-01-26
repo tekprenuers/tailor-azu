@@ -1,6 +1,5 @@
 <?php
-
-require '../../core/functions.php';
+require '../core/functions.php';
 cors();
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
@@ -10,15 +9,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         if (!$user) {
             doReturn(401, false, ["message" => "Please login to continue"]);
         } else {
-            $retval = array(
-                "next_renewal" => gmdate("d M, Y", intval($user['expiry'])),
-                "expired" => false
-            );
-            if (time() >= intval($user['expiry'])) {
-                $retval['expired'] = true;
-                unset($retval['next_renewal']);
-            }
-            doReturn(200, true, $retval);
+            //redirect to payment page
+            doReturn(200, true, ["message" => "Redirecting you to paystack", "url" =>BACKEND_URL."/subscriptions/pay.php?uid=$user_id"]);
         }
     } catch (Exception $e) {
         error_log($e);

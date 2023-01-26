@@ -11,9 +11,6 @@ $myForm = new octaValidate('form_get_customers', OV_OPTIONS);
 $myForm->customRule("SEARCH", "/^[a-zA-Z0-9+@. ]+$/", "Search query contains invalid characters");
 //define rules for each form input name
 $valRules = array(
-    "token" => array(
-        ["R", "A token is required"]
-    ),
     "search" => array(
         ["SEARCH"]
     )
@@ -23,7 +20,7 @@ $valRules = array(
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     try {
         if ($myForm->validateFields($valRules, $_GET) === true) {
-            $user_id = verifyToken($_GET['token']);
+            $user_id = verifyJWT();
             $user = $db->SelectOne("SELECT * FROM users WHERE user_id  = :uid", ['uid' => $user_id]);
             if (!$user) {
                 doReturn(401, false, ["message" => "Please login to continue"]);
@@ -47,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
                     //check if user is premium and customer has an image profile link
                     if ($customers[$key]['image']) {
-                        $customers[$key]['image'] = BACKEND_URL . PUBLIC_PROFILE_DIR . $customers[$key]['image'];
+                        $customers[$key]['image'] = BACKEND_URL .'/'. PUBLIC_PROFILE_DIR . $customers[$key]['image'];
                     } else {
                         unset($customers[$key]['image']);
                     }

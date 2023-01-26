@@ -10,15 +10,11 @@ require_once(dirname(__FILE__) . '/../core/paystack/src/autoload.php');
 //init paystack
 $paystack = new Yabacon\Paystack(PAYSTACK_SECRET_KEY);
 //check if token is supplied
-if ($_SERVER['REQUEST_METHOD'] == "GET" && isset($_GET['token']) && !empty($_GET['token'])) {
+if ($_SERVER['REQUEST_METHOD'] == "GET" && isset($_GET['uid']) && !empty($_GET['uid'])) {
     try {
-        $Token = htmlspecialchars(urldecode($_GET['token']));
-        //verify token
-        $token = explode("::", $Token);
-        $user_id = base64_decode($token[0]);
-        $time = $token[1];
+        $user_id = htmlspecialchars(urldecode($_GET['uid']));
         // $premium = base64_decode( $token[2] );
-        if (!$user_id || !$time || (time() > intval($time))) {
+        if (!$user_id) {
             $_SESSION['error'] = array(
                 "code" => 400,
                 "message" => "[INVALID_TOKEN] something is not right, please login to continue"
@@ -59,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET" && isset($_GET['token']) && !empty($_GET
             // unique to customers
             'reference' => $reference,
             // unique to transactions
-            'callback_url' => BACKEND_URL . 'subscriptions/verify.php'
+            'callback_url' => BACKEND_URL . '/subscriptions/verify.php'
         ]);
         //store in database
         $db->Insert("INSERT INTO transactions (user_id, reference, payment_method, date_created) VALUES (:uid, :ref, :method, :date)", [

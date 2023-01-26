@@ -16,16 +16,13 @@ $valRules = array(
     "data" => array(
         ["R", "The data to delete is required"],
         ["ALPHA_SPACES", "The data to delete must contain only letters or spaces"]
-    ),
-    "token" => array(
-        ["R", "A token is required"]
     )
 );
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         if ($myForm->validateFields($valRules, $_POST) === true) {
-            $user_id = verifyToken($_POST['token']);
+            $user_id = verifyJWT();
             $user = $db->SelectOne("SELECT * FROM users WHERE user_id  = :uid", ['uid' => $user_id]);
             if (!$user) {
                 doReturn(401, false, ["message" => "Please login to continue"]);

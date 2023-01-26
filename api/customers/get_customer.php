@@ -9,9 +9,6 @@ use Validate\octaValidate;
 $myForm = new octaValidate('form_get_customer', OV_OPTIONS);
 //define rules for each form input name
 $valRules = array(
-    "token" => array(
-        ["R", "A token is required"]
-    ),
     "cus_id" => array(
         ["R", "Customer's ID is required!"],
         ["ALPHA_NUMERIC", "Customer ID must contain letters or numbers"]
@@ -21,7 +18,7 @@ $valRules = array(
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     try {
         if ($myForm->validateFields($valRules, $_GET) === true) {
-            $user_id = verifyToken($_GET['token']);
+            $user_id = verifyJWT();
             $user = $db->SelectOne("SELECT * FROM users WHERE user_id  = :uid", ['uid' => $user_id]);
             if (!$user) {
                 doReturn(401, false, ["message" => "Please login to continue"]);
@@ -42,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                 unset($customer['id']);
                 //check if user is premium and customer has an image profile link
                 if (!empty($customer['image'])) {
-                    $customer['image'] = BACKEND_URL . PUBLIC_PROFILE_DIR . $customer['image'];
+                    $customer['image'] = BACKEND_URL . '/'.PUBLIC_PROFILE_DIR . $customer['image'];
                 } else {
                     unset($customer['image']);
                 }

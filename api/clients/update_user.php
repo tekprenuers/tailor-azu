@@ -16,7 +16,11 @@ $valRules = array(
     ),
     "lname" => array(
         ["R", "Your Last Name is required"],
-        ["APLHA_SPACES", "Your Last must have letters or spaces"]
+        ["APLHA_SPACES", "Your Last Name must have letters or spaces"]
+    ),
+    "state" => array(
+        ["R", "Your state of origin is required"],
+        ["APLHA_SPACES", "Your state of origin must have letters or spaces"]
     ),
     "phone" => array(
         ["R", "Your Primary Phone is required"],
@@ -24,9 +28,6 @@ $valRules = array(
     ),
     "alt_phone" => array(
         ["DIGITS"]
-    ),
-    "token" => array(
-        ["R", "A token is required"]
     )
 );
 
@@ -39,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         if ($myForm->validateFields($valRules, $_POST) === true && $myForm->validateFiles($fileRules) === true) {
 
-            $user_id = verifyToken($_POST['token']);
+            $user_id = verifyJWT();
 
             $user = $db->SelectOne("SELECT * FROM users WHERE user_id  = :uid", ['uid' => $user_id]);
             if (!$user) {
@@ -54,6 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $phone = (isset($_POST['phone']) && !empty($_POST['phone'])) ? $_POST['phone'] : $user['phone'];
                 $addr = (isset($_POST['addr']) && !empty($_POST['addr'])) ? $_POST['addr'] : $user['addr'];
                 $alt_phone = ((isset($_POST['alt_phone']) && !empty($_POST['alt_phone'])) ? $_POST['alt_phone'] : (!empty($user['alt_phone']))) ? $user['alt_phone'] : null;
+                $state = (isset($_POST['state']) && !empty($_POST['state'])) ? $_POST['state'] : $user['state'];
 
                 if( (isset($_FILES['image']) && !empty($_FILES['image'])) ) {
                     // $image = $_FILES['image']['name'];
@@ -86,13 +88,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
 
                 //check if data exists already
-                $upd = $db->Update("UPDATE users SET fname = :fname, lname = :lname, phone = :phone, alt_phone = :alt_phone, image = :img, addr = :addr WHERE id = :id", [
+                $upd = $db->Update("UPDATE users SET fname = :fname, lname = :lname, phone = :phone, alt_phone = :alt_phone, image = :img, addr = :addr, state = :state WHERE id = :id", [
                     'fname' => $fname,
                     'lname' => $lname,
                     'phone' => $phone, 
                     'img' => $image,
                     'alt_phone' => $alt_phone, 
                     'addr' => $addr, 
+                    'state' => $state,
                     'id' => $user['id']
                 ]);
 

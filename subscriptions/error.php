@@ -48,7 +48,7 @@ if (isset($_SESSION['error']) && !empty($_SESSION['error'])) {
 </head>
 
 <body>
-    <section class="mw-700 m-auto p-4 should-be-centered">
+    <section class="mw-700 m-auto has-shadow p-4 should-be-centered">
         <?php
         if (
             isset($error['code']) && !empty($error['code'])
@@ -56,7 +56,7 @@ if (isset($_SESSION['error']) && !empty($_SESSION['error'])) {
         ) {
             if ($error['code'] === 500):
         ?>
-        <p class="mb-3">Please send us a screenshot of the error message below</p>
+        <p class="mb-3 text-center">Please send us a screenshot of this error</p>
         <section class="alert alert-danger mb-3 radius-0">
             <h5 class="fw-bold">Server Error</h5>
             <p class="mb-0">

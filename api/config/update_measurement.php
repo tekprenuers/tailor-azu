@@ -17,16 +17,13 @@ $valRules = array(
     "gender" => array(
         ["R", "Gender is required"],
         ["ALPHA_ONLY", "Gender must contain only letters"]
-    ),
-    "token" => array(
-        ["R", "A token is required"]
     )
 );
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         if ($myForm->validateFields($valRules, $_POST) === true) {
-            $user_id = verifyToken($_POST['token']);
+            $user_id = verifyJWT();
             $user = $db->SelectOne("SELECT * FROM users WHERE user_id  = :uid", ['uid' => $user_id]);
             if (!$user) {
                 doReturn(401, false, ["message" => "Please login to continue"]);
