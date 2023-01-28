@@ -1,3 +1,3 @@
 <?php
-echo (strtotime("+14 days", time()));
+echo (strtotime("+2 days", time()));
 ?>

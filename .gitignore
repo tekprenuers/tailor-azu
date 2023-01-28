@@ -1,5 +1,3 @@
-code.js
-octaValidate-PHP/vendor
+core/env.php
 uploads/profile/*
 uploads/requests/*
-core/env.php
