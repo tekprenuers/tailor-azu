@@ -33,16 +33,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 //hash password
                 $pass = password_hash($_POST['pass'], PASSWORD_BCRYPT);
                 $user_id = md5($_POST['email'].uniqid());
+                $free_trial = 14;
                 //save to users table
-                $insert = $db->Insert("INSERT INTO users (user_id, email, pass, expiry, date_joined) VALUES (:uid, :email, :pass, :exp, :date)", ['uid' => $user_id, 'email' => $_POST['email'], 'pass' => $pass, 'exp' => strtotime("+14 days", time()), 'date' => time()]);
+                $insert = $db->Insert("INSERT INTO users (user_id, email, pass, expiry, date_joined) VALUES (:uid, :email, :pass, :exp, :date)", ['uid' => $user_id, 'email' => $_POST['email'], 'pass' => $pass, 'exp' => strtotime("+$free_trial days", time()), 'date' => time()]);
                 //subscribe the user to our newsletter
                 $newsletter = $db->Insert("INSERT INTO newsletters (email, last_updated) VALUES (:email, :date)", ['email' => $_POST['email'], 'date' =>time()]);
                 ///////////////////////////////send mail
 
                 $emailTemp = file_get_contents('emails/register.html');
                 $dynamic = array(
-                    "EXPIRY_END_DATE" => gmdate("d M Y", strtotime("+14 days", time())),
-                    "UID" =>  $user_id
+                    "EXPIRY_END_DATE" => gmdate("d M Y", strtotime("+$free_trial days", time())),
+                    "UID" =>  $user_id,
+                    "FREE_TRIAL" => $free_trial
                 );
                 //replace placeholders with actual values
                 $body = doDynamicEmail($dynamic, $emailTemp);
