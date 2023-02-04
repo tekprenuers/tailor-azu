@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                     unset($requests[$key]['id']);
                     //check if image is not empty
                     if($requests[$key]['image']){
-                        $requests[$key]['image'] = BACKEND_URL .'/'. REQUESTS_DIR  . $requests[$key]['image'];
+                        $requests[$key]['image'] = BACKEND_URL .'/'. PUBLIC_REQUESTS_DIR  . $requests[$key]['image'];
                     }
                     //format date
                     $requests[$key]['deadline'] = gmdate('d-m-Y', $requests[$key]['deadline']);

@@ -1,0 +1,17 @@
+create subdomains clients and static
+
+On clients folder, do htaccess and set a new rule to get user profile image. It shouldn't be uploads/profile
+
+create database, and dump sql file to upload the tables and structure and replace env vars
+
+move images to static/assets/img
+
+run test before replacing test key with secret key
+
+do cors on static folder and make it accessible anywhere
+
+push and enable cron tasks and make them run everyday
+
+create email accounts hello, support, and admin, then configure mail file
+
+fix measurement updated ago

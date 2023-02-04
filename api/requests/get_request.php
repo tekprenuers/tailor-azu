@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                 $request['deadline'] = gmdate('Y-m-d', $request['deadline']);
                 //check if image is not empty
                 if($request['image']){
-                    $request['image'] = BACKEND_URL .'/'. REQUESTS_DIR  . $request['image'];
+                    $request['image'] = BACKEND_URL .'/'. PUBLIC_REQUESTS_DIR  . $request['image'];
                 }
                 // //hide private vars
                 // unset($request['user_id']);

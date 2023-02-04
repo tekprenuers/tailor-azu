@@ -1,4 +1,5 @@
 core/env.php
+env.php
 uploads/profile/*
 uploads/requests/*
 uploads/support/*
