@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET" && isset($_GET['reference']) && !empty($
             exit();
         }
         //get the transaction
-        $transData = $db->SelectOne("SELECT transactions.id AS trans_id, transactions.date_created AS trans_date * FROM transactions INNER JOIN users ON users.user_id = transactions.user_id WHERE transactions.reference = :ref AND transactions.status = :stat" ,[
+        $transData = $db->SelectOne("SELECT *, transactions.id AS trans_id, transactions.date_created AS trans_date FROM transactions INNER JOIN users ON users.user_id = transactions.user_id WHERE transactions.reference = :ref AND transactions.status = :stat" ,[
             'ref' => $reference,
             'stat' => "PENDING"
         ]);
@@ -55,11 +55,16 @@ if ($_SERVER['REQUEST_METHOD'] == "GET" && isset($_GET['reference']) && !empty($
                 //previous license did not expire, so roll over
                 $expiry = strtotime("+1 year", $expiry);
             }
+            //update user
+            $db->Update("UPDATE users SET expiry = :expiry WHERE user_id = :user_id", [
+                'expiry' => $expiry,
+                'user_id' => $transData['user_id']
+            ]);
             ///////////////////////////////send mail
             
             $emailTemp = file_get_contents('../emails/license_renewed.html');
             $dynamic = array(
-                "FNAME" => (!empty($user['fname'])) ? $user['fname'] : "Esteemed Client",
+                "FNAME" => (!empty($transData['fname'])) ? $transData['fname'] : "Esteemed Client",
                 "EXPIRY_END_TIME" => gmdate("d M Y", $expiry),
                 "UID" => $transData['user_id']
             );
@@ -68,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET" && isset($_GET['reference']) && !empty($
             //send mail
             sendMail($transData['email'], $transData['fname'], "Your License Has Been Renewed", $body);
             //go back to dashboard
-            $dashUrl = FRONTEND_URL.'/dashboard/license';
+            $dashUrl = FRONTEND_URL."/dashboard/license?success=true&ref=$reference";
             header("Location: $dashUrl");
             exit();
         }else{
@@ -81,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET" && isset($_GET['reference']) && !empty($
             
             $emailTemp = file_get_contents('../emails/failed_payment.html');
             $dynamic = array(
-                "FNAME" => (!empty($user['fname'])) ? $user['fname'] : "Esteemed Client",
+                "FNAME" => (!empty($transData['fname'])) ? $transData['fname'] : "Esteemed Client",
                 "REFERENCE" => $reference,
                 "TIME" => gmdate("d M Y", intval($transData['trans_date'])),
                 "UID" => $transData['user_id']

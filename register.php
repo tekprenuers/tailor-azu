@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $insert = $db->Insert("INSERT INTO users (user_id, email, pass, expiry, date_joined) VALUES (:uid, :email, :pass, :exp, :date)", ['uid' => $user_id, 'email' => $_POST['email'], 'pass' => $pass, 'exp' => strtotime("+$free_trial days", time()), 'date' => time()]);
                 //subscribe the user to our newsletter
                 $newsletter = $db->Insert("INSERT INTO newsletters (email, last_updated) VALUES (:email, :date)", ['email' => $_POST['email'], 'date' =>time()]);
-                ///////////////////////////////send mail
+                ///////////////////////////////send mail  1676768693
 
                 $emailTemp = file_get_contents('emails/register.html');
                 $dynamic = array(
