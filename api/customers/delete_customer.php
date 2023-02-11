@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
                 
                 //delete measurement
-                $db->Remove("DELETE FROM measurements WHERE cus_id = :cid AND user_id = :uid", ['cid' => $customer['cus_id'], 'uid' => $user_id]);
+                $db->Remove("DELETE FROM measurements WHERE cus_id = :cid AND user_id = :uid", ['cid' => $_POST['cus_id'], 'uid' => $user_id]);
                 
                 doReturn(200, true, ["message" => "Customer data has been deleted"]);
             }

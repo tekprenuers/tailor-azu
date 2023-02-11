@@ -48,9 +48,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         "fname" => $user['fname'],
                         "image" => (!empty($user['image'])) ? BACKEND_URL . '/'.PUBLIC_PROFILE_DIR . $user['image'] : null
                     );
-                    $retval["profileUpdated"] = true;
-                } else {
-                    $retval["profileUpdated"] = false;
                 }
                 //do response
                 doReturn(200, true, $retval);

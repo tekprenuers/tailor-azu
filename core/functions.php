@@ -22,7 +22,8 @@ define(
     'OV_OPTIONS',
     array(
         "stripTags" => true,
-        "strictMode" => true
+        "strictMode" => true,
+        "strictWords" => ["tailorskit", "object", "null", "undefined", "admin", "array", "webmaster", "sql", "php", "javascript"]
     )
 );
 

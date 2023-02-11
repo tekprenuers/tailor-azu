@@ -30,10 +30,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                     "uid" => $user_id
                 ]);
 
+                //configured measurements
+                $meas_upd = $db->SelectOne("SELECT * FROM config WHERE (tape_male IS NOT NULL AND tape_female IS NOT NULL) AND user_id = :uid", [
+                    "uid" => $user_id
+                ]);
+
                 $stats = array(
-                    "total_customers" => $customers['total'],
-                    "total_requests" => $requests['total'],
-                    "total_measurements" => $measurements['total']
+                    "profile_updated" => (checkUpdatedProfile($user)) ? true : false,
+                    "measurement_updated" => (!empty($meas_upd)) ? true : false,
+                    "total_customers" => intval($customers['total']),
+                    "total_requests" => intval($requests['total']),
+                    "total_measurements" => intval($measurements['total'])
                 );
 
                 doReturn(200, true, $stats);

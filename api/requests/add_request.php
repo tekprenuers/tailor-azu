@@ -21,7 +21,7 @@ $valRules = array(
         ["R", "Date to be delivered is required"]
     ),
     "extra_note" => array(
-        ["R", "Additional data is required"]
+        ["R", "Extra note is required"]
     ),
     "cus_id" => array(
         ["R", "Customer ID is required"],
@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $deadline = (isset($_POST['deadline']) && !empty($_POST['deadline'])) ? strtotime($_POST['deadline']) : null;
 
                 //check if due date is in the past
-                if(time() > $deadline)  doReturn(400, false, ["message" => "Due date must not be in the past"]);
+                if(time() > $deadline)  doReturn(400, false, ["message" => "Deadline must not be in the past"]);
 
                 //check if user uploaded an image
                 $image = (isset($_FILES['image']) && !empty($_FILES['image'])) ? $_FILES['image']['name'] : null;
@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 //check if customer exists
                 $customer = $db->SelectOne("SELECT * FROM customers WHERE cus_id = :cid AND user_id = :uid", ['cid' => $_POST['cus_id'], 'uid' => $user_id]);
                 if (!$customer) {
-                    doReturn(400, false, ["message" => "Customer does not exist"]);
+                    doReturn(400, false, ["message" => "This customer does not exist"]);
                 }
                 
                 //request id  
