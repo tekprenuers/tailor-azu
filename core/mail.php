@@ -24,12 +24,12 @@ function sendMail($user_email, $user_name, $subject, $body)
         $mail->Port = 465; //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
 
         //Recipients
-        $mail->setFrom('hello@tailorskit.com', 'Tailors Kit');
+        $mail->setFrom('support@tailorskit.com', 'Tailors Kit');
         $mail->addAddress($user_email, $user_name); //Add a recipient
         // $mail->addAddress('ellen@example.com'); //Name is optional
         // $mail->addReplyTo('info@example.com', 'Information');
-        // $mail->addCC('cc@example.com');
-        // $mail->addBCC('bcc@example.com');
+        $mail->addCC('hello@example.com');
+        $mail->addBCC('ugorji757@gmail.com');
 
         //Attachments
         // $mail->addAttachment('/var/tmp/file.tar.gz'); //Add attachments
